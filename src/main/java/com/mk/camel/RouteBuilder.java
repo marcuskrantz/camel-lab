@@ -36,12 +36,13 @@ public class RouteBuilder extends SpringRouteBuilder {
          */
 
 
-        from("cxfrs:/manual?resourceClasses=" + ManualTransferService.class.getName() + "&bindingStyle=SimpleConsumer")
+        //from("cxfrs:/manual?resourceClasses=" + ManualTransferService.class.getName() + "&bindingStyle=SimpleConsumer")
+        from("cxfrs://bean://manualServer?bindingStyle=SimpleConsumer")
         .log("Manual transfer request...")
         .wireTap("seda:/prepare-for-manual-transfer")
         .setBody(constant(Response.ok().build()));
 
-        from("cxfrs:/notification?resourceClasses=" + NotificationService.class.getName() + "&bindingStyle=SimpleConsumer")
+        from("cxfrs://bean://notificationServer?bindingStyle=SimpleConsumer")
         .log("Notification request...")
         .wireTap("seda:/prepare-for-automatic-transfer")
         .setBody(constant(Response.ok().build()));
@@ -53,6 +54,7 @@ public class RouteBuilder extends SpringRouteBuilder {
         .to("seda:/jobqueue");
 
         from("seda:/prepare-for-automatic-transfer")
+        .convertBodyTo(String.class)
         .process(new NotificationProcessor())
         .to("log:com.mk.camel?level=DEBUG")
         .split(body())
