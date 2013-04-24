@@ -9,10 +9,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 @Path("/notification")
-public interface RestService {
+public class NotificationService {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hello();
+    public Response processNotification() {
+        return null;
+    }
 
 }
