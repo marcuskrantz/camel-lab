@@ -13,7 +13,7 @@ public class ManualTransferService {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response doManualTransfer(@QueryParam("start") final String start
             , @QueryParam("end") final String end
-            , @QueryParam("transfertypes") final Set<String> transfertypes) {
+            , @QueryParam("transfertypes") final String transfertypes) {
         return null;
     }
 }

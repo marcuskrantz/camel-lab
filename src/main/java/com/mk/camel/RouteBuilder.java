@@ -1,5 +1,7 @@
 package com.mk.camel;
 
+import com.mk.camel.processor.ManualTransferProcessor;
+import com.mk.camel.processor.NotificationProcessor;
 import com.mk.services.ManualTransferService;
 import com.mk.services.NotificationService;
 import com.mk.services.model.TransferJob;
@@ -35,39 +37,26 @@ public class RouteBuilder extends SpringRouteBuilder {
 
 
         from("cxfrs:/manual?resourceClasses=" + ManualTransferService.class.getName() + "&bindingStyle=SimpleConsumer")
-        .wireTap("seda:/test")
-        .process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getOut().setBody(Response.status(202).build());
-            }
-        });
+        .log("Manual transfer request...")
+        .wireTap("seda:/prepare-for-manual-transfer")
+        .setBody(constant(Response.ok().build()));
 
-        from("seda:/test").process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                final Object start = exchange.getIn().getHeader("start");
-                final Object end = exchange.getIn().getHeader("end");
+        from("cxfrs:/notification?resourceClasses=" + NotificationService.class.getName() + "&bindingStyle=SimpleConsumer")
+        .log("Notification request...")
+        .wireTap("seda:/prepare-for-automatic-transfer")
+        .setBody(constant(Response.ok().build()));
 
-                final Set<String> transfertypes = (Set<String>) exchange.getIn().getHeader("transfertypes");
-
-                final List<TransferJob> params = new ArrayList<TransferJob>();
-                for (final String tt : transfertypes) {
-                    final TransferJob job = new TransferJob();
-                    job.setStart(start.toString());
-                    job.setEnd(end.toString());
-                    job.setTransferType(tt);
-                    job.setCrn("191212121212");
-
-                    params.add(job);
-                }
-
-                exchange.getOut().setBody(params);
-            }
-        })
+        from("seda:/prepare-for-manual-transfer")
+        .process(new ManualTransferProcessor())
         .to("log:com.mk.camel?level=DEBUG")
-        .split(body()).to("seda:/jobqueue");
+        .split(body())
+        .to("seda:/jobqueue");
 
+        from("seda:/prepare-for-automatic-transfer")
+        .process(new NotificationProcessor())
+        .to("log:com.mk.camel?level=DEBUG")
+        .split(body())
+        .to("seda:/jobqueue");
 
         from("seda:/jobqueue").process(new Processor() {
             @Override
@@ -75,5 +64,7 @@ public class RouteBuilder extends SpringRouteBuilder {
                 log.debug("BODY: {}", exchange.getIn().getBody().getClass());
             }
         });
+
+        from("seda:/eventqueue").to("websocket:/events");
     }
 }
