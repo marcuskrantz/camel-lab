@@ -43,7 +43,9 @@ public class RouteBuilder extends SpringRouteBuilder {
         .split(body())
         .to("seda:/jobqueue");
 
-        from("seda:/jobqueue").process(new Processor() {
+        from("seda:/jobqueue")
+        .to("seda:/eventqueue")
+        .process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 log.debug("BODY: {}", exchange.getIn().getBody().getClass());
@@ -52,6 +54,12 @@ public class RouteBuilder extends SpringRouteBuilder {
 
 
 
-        from("seda:/eventqueue").to("websocket:/events");
+        from("seda:/eventqueue").process(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                log.debug("Event on event queue");
+                exchange.getOut().setBody("Event queue: " + exchange.getIn().getBody());
+            }
+        }).marshal().json().to("websocket:/events");
     }
 }
