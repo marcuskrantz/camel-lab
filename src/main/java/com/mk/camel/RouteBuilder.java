@@ -44,7 +44,7 @@ public class RouteBuilder extends SpringRouteBuilder {
         .to("seda:/jobqueue");
 
         from("seda:/jobqueue")
-        .to("seda:/eventqueue");
+        .to("seda:/eventqueue?multipleConsumers=true");
         /*.process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -56,11 +56,16 @@ public class RouteBuilder extends SpringRouteBuilder {
         WebsocketComponent comp = (WebsocketComponent) getContext().getComponent("websocket");
         comp.setPort(8081);
 
-        from("seda:/eventqueue").process(new Processor() {
+        from("seda:/eventqueue?multipleConsumers=true").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 log.debug("Event on event queue");
             }
         }).marshal().json(JsonLibrary.Jackson).to("websocket:events?sendToAll=true");
+
+        from("seda:/eventqueue?multipleConsumers=true")
+        .log("Log event...")
+        .to("log:com.mk.camel?level=DEBUG");
+
     }
 }
