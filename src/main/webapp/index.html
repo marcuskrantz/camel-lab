@@ -1,14 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <meta charset="utf-8">
+    <title>WSTest</title>
     <script type="text/javascript">
 
+        if (!window.WebSocket) {
+            alert("WebSocket not supported by this browser");
+        }
 
+        ws=new WebSocket('ws://localhost:8081/events');
+
+        ws.onopen = function() {
+            console.log('Connection opened');
+        };
+
+         ws.onmessage = function(m) {
+             console.log('new message: %s', m);
+            if (m.data){
+                var chat= document.getElementById('events');
+                var spanText = document.createElement('span');
+                spanText.className='text';
+                spanText.innerHTML=m.data;
+                var lineBreak = document.createElement('br');
+                chat.appendChild(spanText);
+                chat.appendChild(lineBreak);
+                //chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+            }
+        };
+
+        ws.onclose = function(m) {
+            ws=null;
+        };
+
+        ws.onerror = function (e) {
+            console.log('ERROR: %s', e);
+        }
 
     </script>
 </head>
 <body>
+      <div id="events">
 
+      </div>
 </body>
 </html>

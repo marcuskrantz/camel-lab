@@ -5,6 +5,8 @@ import com.mk.camel.processor.ManualTransferProcessor;
 import com.mk.camel.processor.NotificationProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.websocket.WebsocketComponent;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,22 +46,23 @@ public class RouteBuilder extends SpringRouteBuilder {
         .to("seda:/jobqueue");
 
         from("seda:/jobqueue")
-        .to("seda:/eventqueue")
-        .process(new Processor() {
+        .to("seda:/eventqueue");
+        /*.process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 log.debug("BODY: {}", exchange.getIn().getBody().getClass());
             }
-        });
+        });*/
 
 
+        WebsocketComponent comp = (WebsocketComponent) getContext().getComponent("websocket");
+        comp.setPort(8081);
 
         from("seda:/eventqueue").process(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 log.debug("Event on event queue");
-                exchange.getOut().setBody("Event queue: " + exchange.getIn().getBody());
             }
-        }).marshal().json().to("websocket:/events");
+        }).marshal().json(JsonLibrary.Jackson).to("websocket:events?sendToAll=true");
     }
 }
