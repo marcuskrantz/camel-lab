@@ -39,4 +39,18 @@ public class TransferJob {
     public void setCrn(String crn) {
         this.crn = crn;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder("TransferJob: { ")
+                .append("crn : ")
+                .append(getCrn())
+                .append(", start : ")
+                .append(getStart())
+                .append(", end : ")
+                .append(getEnd())
+                .append(", scope : ")
+                .append(getTransferType())
+                .append(" } ").toString();
+    }
 }

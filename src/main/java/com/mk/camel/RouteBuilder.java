@@ -1,5 +1,6 @@
 package com.mk.camel;
 
+import com.mk.bean.CitizenLookupService;
 import com.mk.camel.processor.ManualTransferProcessor;
 import com.mk.camel.processor.NotificationProcessor;
 import org.apache.camel.Exchange;
@@ -37,7 +38,7 @@ public class RouteBuilder extends SpringRouteBuilder {
         .to("seda:/jobqueue");
 
         from("seda:/prepare-for-automatic-transfer")
-        .process(new NotificationProcessor())
+        .bean(CitizenLookupService.class, "findByAccessToken")
         .to("log:com.mk.camel?level=DEBUG")
         .split(body())
         .to("seda:/jobqueue");
