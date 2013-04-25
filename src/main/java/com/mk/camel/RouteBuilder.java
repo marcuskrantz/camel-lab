@@ -4,6 +4,7 @@ import com.mk.bean.CitizenLookupService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.websocket.WebsocketComponent;
+import org.apache.camel.component.websocket.WebsocketConstants;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.slf4j.Logger;
@@ -56,11 +57,10 @@ public class RouteBuilder extends SpringRouteBuilder {
         WebsocketComponent comp = (WebsocketComponent) getContext().getComponent("websocket");
         comp.setPort(8081);
 
-        from("seda:/eventqueue").process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                log.debug("Event on event queue");
-            }
-        }).marshal().json(JsonLibrary.Jackson).to("websocket:events?sendToAll=true");
+        from("seda:/eventqueue")
+        .marshal()
+        .json(JsonLibrary.Jackson)
+        .setHeader(WebsocketConstants.CONNECTION_KEY, simple("apa"))
+        .to("websocket:events");
     }
 }

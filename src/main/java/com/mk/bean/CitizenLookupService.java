@@ -4,6 +4,7 @@ import com.mk.model.CitizenEntity;
 import com.mk.services.model.TransferJob;
 import com.mk.services.model.TransferParams;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.websocket.WebsocketConstants;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
