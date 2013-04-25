@@ -5,6 +5,7 @@ public class TransferJob {
     private String start;
     private String end;
     private String transferType;
+    private String accessToken;
 
     private String crn;
 
@@ -38,6 +39,14 @@ public class TransferJob {
 
     public void setCrn(String crn) {
         this.crn = crn;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     @Override

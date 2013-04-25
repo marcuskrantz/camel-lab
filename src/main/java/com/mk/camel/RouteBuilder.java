@@ -50,6 +50,8 @@ public class RouteBuilder extends SpringRouteBuilder {
             }
         });
 
+
+
         from("seda:/eventqueue").to("websocket:/events");
     }
 }

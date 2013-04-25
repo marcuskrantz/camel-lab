@@ -33,6 +33,7 @@ public class CitizenLookupService {
         tj.setTransferType(scope);
         tj.setStart(timestamp);
         tj.setEnd(timestamp);
+        tj.setAccessToken(accessToken);
 
         return Collections.singletonList(tj);
     }
