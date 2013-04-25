@@ -1,41 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
   <import resource="classpath:/META-INF/cxf/cxf.xml" />
 
-  <bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
-
-  <jaxrs:server id="manualRestService" address="/manual" serviceClass="com.mk.services.ManualTransferService">
-    <jaxrs:providers>
-      <ref bean="jacksonJsonProvider" />
-    </jaxrs:providers>
-  </jaxrs:server>
-
-  <jaxrs:server id="notificationRestService" address="/notification" serviceClass="com.mk.services.NotificationService">
-    <jaxrs:providers>
-      <ref bean="jacksonJsonProvider" />
-    </jaxrs:providers>
-  </jaxrs:server>
-
-
-  <cxf:rsServer id="manualServer" address="/manual" serviceClass="com.mk.services.ManualTransferService" staticSubresourceResolution="true" />
-  <cxf:rsServer id="notificationServer" address="/notification" serviceClass="com.mk.services.NotificationService" staticSubresourceResolution="true" />
-
-  <camel:camelContext>
-    <camel:contextScan />
+  <camel:camelContext >
+    <camel:package>com.mk.camel</camel:package>
   </camel:camelContext>
 
-  <context:component-scan base-package="com.mk.camel" />
+  <bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+
+  <cxf:rsServer id="manualServer" address="/manual" serviceClass="com.mk.services.ManualTransferService" staticSubresourceResolution="true">
+    <cxf:providers>
+      <ref bean="jacksonJsonProvider" />
+    </cxf:providers>
+  </cxf:rsServer>
+
+  <cxf:rsServer id="notificationServer" address="/notification" serviceClass="com.mk.services.NotificationService" staticSubresourceResolution="true">
+    <cxf:providers>
+      <ref bean="jacksonJsonProvider" />
+    </cxf:providers>
+  </cxf:rsServer>
 
 </beans>

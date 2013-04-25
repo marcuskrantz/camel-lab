@@ -16,7 +16,6 @@ public class RouteBuilder extends SpringRouteBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(RouteBuilder.class);
 
-    @Override
     public void configure() throws Exception {
 
         log.info("Building routes...");
