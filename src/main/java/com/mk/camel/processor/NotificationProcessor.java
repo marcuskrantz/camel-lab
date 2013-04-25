@@ -26,10 +26,5 @@ public class NotificationProcessor implements Processor {
         final String accessToken = (String) map.get("token");
         log.debug("Token: {}", accessToken);
 
-
-
-
-
-
     }
 }
