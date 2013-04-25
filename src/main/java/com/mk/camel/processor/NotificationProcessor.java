@@ -15,21 +15,9 @@ public class NotificationProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        final String rawBody = (String) exchange.getIn().getBody();
-        log.debug("Raw body {}", rawBody);
+        final Map<String, Object> rawBody = (Map<String, Object>) exchange.getIn().getBody();
 
-        final ObjectMapper mapper = new ObjectMapper();
-
-        final Map<String, Object> map = mapper.readValue(rawBody, Map.class);
-        log.debug("got map");
-
-        final String accessToken = (String) map.get("token");
+        final String accessToken = (String) rawBody.get("token");
         log.debug("Token: {}", accessToken);
-
-
-
-
-
-
     }
 }

@@ -9,6 +9,7 @@
     </encoder>
   </appender>
 
+  <logger name="org.apache.cxf" level="WARN" />
   <logger name="com.mk.camel" level="DEBUG" />
 
   <root level="WARN">

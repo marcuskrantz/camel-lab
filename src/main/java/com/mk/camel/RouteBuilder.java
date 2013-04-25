@@ -31,12 +31,6 @@ public class RouteBuilder extends SpringRouteBuilder {
 
         log.info("Building routes...");
 
-        /*
-         * / = http://<server>:<port>/services/ since our CXF servlet is mapped onto /services/*
-         */
-
-
-        //from("cxfrs:/manual?resourceClasses=" + ManualTransferService.class.getName() + "&bindingStyle=SimpleConsumer")
         from("cxfrs://bean://manualServer?bindingStyle=SimpleConsumer")
         .log("Manual transfer request...")
         .wireTap("seda:/prepare-for-manual-transfer")
@@ -54,7 +48,6 @@ public class RouteBuilder extends SpringRouteBuilder {
         .to("seda:/jobqueue");
 
         from("seda:/prepare-for-automatic-transfer")
-        .convertBodyTo(String.class)
         .process(new NotificationProcessor())
         .to("log:com.mk.camel?level=DEBUG")
         .split(body())
