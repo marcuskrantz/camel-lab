@@ -45,19 +45,12 @@ public class RouteBuilder extends SpringRouteBuilder {
         .to("seda:/jobqueue");
 
         from("seda:/jobqueue")
-        .to("seda:/eventqueue");
-        /*.process(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                log.debug("BODY: {}", exchange.getIn().getBody().getClass());
-            }
-        });*/
-
+        .to("seda:/eventqueue?multipleConsumers=true");
 
         WebsocketComponent comp = (WebsocketComponent) getContext().getComponent("websocket");
         comp.setPort(8081);
 
-        from("seda:/eventqueue")
+        from("seda:/eventqueue?multipleConsumers=true")
         .marshal()
         .json(JsonLibrary.Jackson)
         .setHeader(WebsocketConstants.CONNECTION_KEY, simple("apa"))
