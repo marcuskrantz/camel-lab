@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.Response;
+import java.util.Map;
 
 @Component
 public class RouteBuilder extends SpringRouteBuilder {
@@ -55,5 +56,15 @@ public class RouteBuilder extends SpringRouteBuilder {
         .json(JsonLibrary.Jackson)
         .setHeader(WebsocketConstants.CONNECTION_KEY, simple("apa"))
         .to("websocket:events");
+
+        from("websocket:events").process(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                final Map<String,Object> headers = exchange.getIn().getHeaders();
+                for (final String key: headers.keySet()) {
+                    log.debug("HEADER {}: {}", key, headers.get(key));
+                }
+            }
+        });
     }
 }

@@ -13,6 +13,7 @@
 
         ws.onopen = function(event) {
             console.log('Connection opened');
+            ws.send('191212121212');
         };
 
          ws.onmessage = function(m) {
