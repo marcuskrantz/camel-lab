@@ -2,20 +2,15 @@ package com.mk.bean;
 
 import com.mk.model.CitizenEntity;
 import com.mk.services.model.TransferJob;
+import com.mk.services.model.TransferParams;
 import org.apache.camel.Exchange;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: marcus
- * Date: 2013-04-25
- * Time: 11:21
- * To change this template use File | Settings | File Templates.
- */
 @Service
 public class CitizenLookupService {
 
@@ -38,8 +33,22 @@ public class CitizenLookupService {
         return Collections.singletonList(tj);
     }
 
-    public CitizenEntity findByLoggedInCitizen() {
-        return getTolvan();
+    public List<TransferJob> findByLoggedInCitizen(final Exchange exchange) {
+        final TransferParams params = (TransferParams) exchange.getIn().getBody();
+        final List<TransferJob> jobs = new ArrayList<TransferJob>();
+
+        for (final String tt : params.getTransferTypes()) {
+            final TransferJob job = new TransferJob();
+            job.setStart(params.getStart());
+            job.setEnd(params.getEnd());
+            job.setTransferType(tt);
+            job.setCrn(getTolvan().getCivicRegistrationNumber());
+
+            jobs.add(job);
+        }
+
+        return jobs;
+
     }
 
     private CitizenEntity getTolvan() {
