@@ -30,4 +30,13 @@ public class TransferParams {
     public void setTransferTypes(Set<String> transferTypes) {
         this.transferTypes = transferTypes;
     }
+
+    @Override
+    public String toString() {
+        return "TransferParams{" +
+                "start='" + start + '\'' +
+                ", end='" + end + '\'' +
+                ", transferTypes=" + transferTypes +
+                '}';
+    }
 }

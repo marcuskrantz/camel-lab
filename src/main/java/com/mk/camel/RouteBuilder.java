@@ -2,24 +2,14 @@ package com.mk.camel;
 
 import com.mk.camel.processor.ManualTransferProcessor;
 import com.mk.camel.processor.NotificationProcessor;
-import com.mk.services.ManualTransferService;
-import com.mk.services.NotificationService;
-import com.mk.services.model.TransferJob;
-import com.mk.services.model.TransferParams;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Component
 public class RouteBuilder extends SpringRouteBuilder {
