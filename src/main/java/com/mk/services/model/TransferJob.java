@@ -58,6 +58,8 @@ public class TransferJob {
                 .append(getStart())
                 .append(", end : ")
                 .append(getEnd())
+                .append(", token : ")
+                .append(getAccessToken())
                 .append(", scope : ")
                 .append(getTransferType())
                 .append(" } ").toString();
